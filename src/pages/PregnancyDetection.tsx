@@ -47,8 +47,8 @@ export default function PregnancyDetection() {
   return (
     <div className="min-h-screen bg-background pb-24">
       <PageHeader 
-        title="Pregnancy Stunting Detection" 
-        subtitle="Assess risk before birth"
+        title="Deteksi Stunting Kehamilan" 
+        subtitle="Menilai risiko sebelum kelahiran"
       />
 
       <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
@@ -56,29 +56,29 @@ export default function PregnancyDetection() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Card className="p-4 space-y-4 shadow-card">
-            <h3 className="font-semibold text-foreground">Mother's Information</h3>
+            <h3 className="font-semibold text-foreground">Informasi Ibu</h3>
             
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                label="Age"
+                label="Usia"
                 name="motherAge"
                 type="number"
                 placeholder="25"
                 value={formData.motherAge || ''}
                 onChange={(v) => handleChange('motherAge', v)}
-                unit="years"
+                unit="tahun"
                 min={10}
                 max={60}
                 required
               />
               <FormField
-                label="Pregnancy Age"
+                label="Usia Kehamilan"
                 name="pregnancyWeeks"
                 type="number"
                 placeholder="20"
                 value={formData.pregnancyWeeks || ''}
                 onChange={(v) => handleChange('pregnancyWeeks', v)}
-                unit="weeks"
+                unit="minggu"
                 min={1}
                 max={42}
                 required
@@ -86,7 +86,7 @@ export default function PregnancyDetection() {
             </div>
 
             <FormField
-              label="Height"
+              label="Tinggi Badan"
               name="motherHeight"
               type="number"
               placeholder="155"
@@ -100,7 +100,7 @@ export default function PregnancyDetection() {
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                label="Pre-pregnancy Weight"
+                label="Berat Sebelum Hamil"
                 name="prePregnancyWeight"
                 type="number"
                 placeholder="50"
@@ -112,7 +112,7 @@ export default function PregnancyDetection() {
                 required
               />
               <FormField
-                label="Current Weight"
+                label="Berat Saat Ini"
                 name="currentWeight"
                 type="number"
                 placeholder="55"
@@ -127,11 +127,11 @@ export default function PregnancyDetection() {
           </Card>
 
           <Card className="p-4 space-y-4 shadow-card">
-            <h3 className="font-semibold text-foreground">Health Checkups</h3>
+            <h3 className="font-semibold text-foreground">Pemeriksaan Kesehatan</h3>
             
             <div className="flex items-center justify-between">
               <Label htmlFor="ironFolicIntake" className="text-sm cursor-pointer flex-1">
-                Taking Iron/Folic Acid Supplements?
+                Mengonsumsi Suplemen Zat Besi/Asam Folat?
               </Label>
               <Switch
                 id="ironFolicIntake"
@@ -141,13 +141,13 @@ export default function PregnancyDetection() {
             </div>
 
             <FormField
-              label="Antenatal Care (ANC) Visits"
+              label="Kunjungan Pemeriksaan Kehamilan (ANC)"
               name="ancVisits"
               type="number"
               placeholder="4"
               value={formData.ancVisits || ''}
               onChange={(v) => handleChange('ancVisits', v)}
-              unit="visits"
+              unit="kali"
               min={0}
               max={20}
               required
@@ -160,7 +160,7 @@ export default function PregnancyDetection() {
             size="lg"
             disabled={!isFormValid}
           >
-            Assess Risk
+            Analisis Risiko
             <ArrowRight className="w-4 h-4" />
           </Button>
         </form>
@@ -168,10 +168,10 @@ export default function PregnancyDetection() {
         {result && (
           <Card className="p-5 space-y-5 shadow-card animate-slide-up">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-lg text-foreground">Assessment Result</h3>
+              <h3 className="font-bold text-lg text-foreground">Hasil Penilaian</h3>
               <RiskIndicator 
                 level={result.level} 
-                label={result.level === 'low' ? 'Low Risk' : result.level === 'moderate' ? 'Moderate Risk' : 'High Risk'} 
+                label={result.level === 'low' ? 'Risiko Rendah' : result.level === 'moderate' ? 'Risiko Sedang' : 'Risiko Tinggi'} 
               />
             </div>
 
@@ -179,7 +179,7 @@ export default function PregnancyDetection() {
               <div className="space-y-2">
                 <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-risk-moderate" />
-                  Risk Factors Identified
+                  Faktor Risiko yang Teridentifikasi
                 </h4>
                 <ul className="space-y-1.5">
                   {result.factors.map((factor, index) => (
@@ -194,7 +194,7 @@ export default function PregnancyDetection() {
             <div className="space-y-2">
               <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-risk-low" />
-                Recommendations
+                Rekomendasi
               </h4>
               <ul className="space-y-2">
                 {result.recommendations.map((rec, index) => (

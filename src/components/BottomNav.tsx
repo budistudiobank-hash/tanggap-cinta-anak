@@ -3,11 +3,11 @@ import { Home, Baby, Heart, Calculator, Utensils } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { path: '/', icon: Home, label: 'Home' },
-  { path: '/pregnancy', icon: Heart, label: 'Pregnancy' },
-  { path: '/child', icon: Baby, label: 'Child' },
-  { path: '/weight', icon: Calculator, label: 'Weight' },
-  { path: '/nutrition', icon: Utensils, label: 'Nutrition' },
+  { path: '/', icon: Home, label: 'Beranda' },
+  { path: '/pregnancy', icon: Heart, label: 'Kehamilan' },
+  { path: '/child', icon: Baby, label: 'Anak' },
+  { path: '/weight', icon: Calculator, label: 'Berat' },
+  { path: '/nutrition', icon: Utensils, label: 'Gizi' },
 ];
 
 export function BottomNav() {
