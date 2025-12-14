@@ -35,87 +35,87 @@ export function assessPregnancyRisk(data: PregnancyData): RiskAssessment {
   // Age assessment (optimal: 20-35 years)
   if (data.motherAge < 18) {
     score += 3;
-    factors.push('Mother is under 18 years old (high risk)');
-    recommendations.push('Young maternal age increases stunting risk. Ensure extra nutritional support and regular medical checkups.');
+    factors.push('Usia ibu di bawah 18 tahun (risiko tinggi)');
+    recommendations.push('Usia ibu muda meningkatkan risiko stunting. Pastikan dukungan nutrisi ekstra dan pemeriksaan medis rutin.');
   } else if (data.motherAge < 20) {
     score += 2;
-    factors.push('Mother is under 20 years old');
-    recommendations.push('Consider additional nutritional counseling for young mothers.');
+    factors.push('Usia ibu di bawah 20 tahun');
+    recommendations.push('Pertimbangkan konseling nutrisi tambahan untuk ibu muda.');
   } else if (data.motherAge > 35) {
     score += 1;
-    factors.push('Mother is over 35 years old');
-    recommendations.push('Advanced maternal age requires closer monitoring. Ensure regular checkups.');
+    factors.push('Usia ibu di atas 35 tahun');
+    recommendations.push('Usia ibu lanjut memerlukan pemantauan lebih ketat. Pastikan pemeriksaan rutin.');
   }
 
   // Height assessment (risk if under 150cm)
   if (data.motherHeight < 145) {
     score += 3;
-    factors.push('Mother\'s height is below 145 cm (high risk)');
-    recommendations.push('Short maternal stature is associated with higher stunting risk. Focus on protein-rich nutrition and monitor fetal growth closely.');
+    factors.push('Tinggi badan ibu di bawah 145 cm (risiko tinggi)');
+    recommendations.push('Tinggi badan ibu yang pendek dikaitkan dengan risiko stunting lebih tinggi. Fokus pada nutrisi kaya protein dan pantau pertumbuhan janin dengan ketat.');
   } else if (data.motherHeight < 150) {
     score += 2;
-    factors.push('Mother\'s height is below 150 cm');
-    recommendations.push('Ensure adequate calcium and protein intake for optimal fetal bone development.');
+    factors.push('Tinggi badan ibu di bawah 150 cm');
+    recommendations.push('Pastikan asupan kalsium dan protein yang cukup untuk perkembangan tulang janin yang optimal.');
   }
 
   // BMI assessment
   if (bmiPrePregnancy < 18.5) {
     score += 3;
-    factors.push('Pre-pregnancy BMI indicates underweight');
-    recommendations.push('Focus on calorie-dense, nutritious foods. Aim for balanced weight gain during pregnancy.');
+    factors.push('IMT sebelum hamil menunjukkan berat badan kurang');
+    recommendations.push('Fokus pada makanan padat kalori dan bergizi. Targetkan kenaikan berat badan yang seimbang selama kehamilan.');
   } else if (bmiPrePregnancy >= 30) {
     score += 1;
-    factors.push('Pre-pregnancy BMI indicates obesity');
-    recommendations.push('Monitor weight gain carefully. Focus on nutritious foods rather than quantity.');
+    factors.push('IMT sebelum hamil menunjukkan obesitas');
+    recommendations.push('Pantau kenaikan berat badan dengan hati-hati. Fokus pada makanan bergizi daripada kuantitas.');
   }
 
   // Weight gain assessment
   if (actualWeightGain < expectedWeightGain * 0.5) {
     score += 2;
-    factors.push('Weight gain is significantly below expected');
-    recommendations.push('Increase caloric intake with nutritious foods. Consider adding healthy snacks between meals.');
+    factors.push('Kenaikan berat badan jauh di bawah yang diharapkan');
+    recommendations.push('Tingkatkan asupan kalori dengan makanan bergizi. Pertimbangkan menambah camilan sehat di antara waktu makan.');
   } else if (actualWeightGain < expectedWeightGain * 0.75) {
     score += 1;
-    factors.push('Weight gain is slightly below expected');
-    recommendations.push('Ensure you\'re eating enough calories. Add protein-rich foods to your diet.');
+    factors.push('Kenaikan berat badan sedikit di bawah yang diharapkan');
+    recommendations.push('Pastikan Anda makan cukup kalori. Tambahkan makanan kaya protein ke dalam diet Anda.');
   }
 
   // Iron/Folic acid intake
   if (!data.ironFolicIntake) {
     score += 2;
-    factors.push('Not taking iron/folic acid supplements');
-    recommendations.push('Start taking iron and folic acid supplements as recommended by your healthcare provider. These are essential for preventing anemia and supporting fetal development.');
+    factors.push('Tidak mengonsumsi suplemen zat besi/asam folat');
+    recommendations.push('Mulai mengonsumsi suplemen zat besi dan asam folat sesuai anjuran tenaga kesehatan. Ini penting untuk mencegah anemia dan mendukung perkembangan janin.');
   }
 
   // ANC visits assessment
   const expectedAncVisits = Math.floor(data.pregnancyWeeks / 4);
   if (data.ancVisits < expectedAncVisits * 0.5) {
     score += 3;
-    factors.push('Antenatal care visits are significantly below recommended');
-    recommendations.push('Schedule regular prenatal checkups immediately. ANC visits are crucial for monitoring your health and baby\'s development.');
+    factors.push('Kunjungan pemeriksaan kehamilan (ANC) jauh di bawah yang dianjurkan');
+    recommendations.push('Segera jadwalkan pemeriksaan kehamilan rutin. Kunjungan ANC sangat penting untuk memantau kesehatan Anda dan perkembangan bayi.');
   } else if (data.ancVisits < expectedAncVisits) {
     score += 1;
-    factors.push('Antenatal care visits are below recommended');
-    recommendations.push('Try to attend all scheduled prenatal appointments for optimal monitoring.');
+    factors.push('Kunjungan pemeriksaan kehamilan di bawah yang dianjurkan');
+    recommendations.push('Usahakan menghadiri semua jadwal pemeriksaan kehamilan untuk pemantauan optimal.');
   }
 
   // Determine risk level
   let level: 'low' | 'moderate' | 'high';
   if (score <= 2) {
     level = 'low';
-    recommendations.unshift('Continue with your current healthy practices. Maintain regular checkups and balanced nutrition.');
+    recommendations.unshift('Lanjutkan praktik sehat Anda saat ini. Pertahankan pemeriksaan rutin dan nutrisi seimbang.');
   } else if (score <= 5) {
     level = 'moderate';
-    recommendations.unshift('There are some risk factors that need attention. Follow the recommendations below and consult your healthcare provider.');
+    recommendations.unshift('Ada beberapa faktor risiko yang perlu diperhatikan. Ikuti rekomendasi di bawah dan konsultasikan dengan tenaga kesehatan.');
   } else {
     level = 'high';
-    recommendations.unshift('Please consult a healthcare professional as soon as possible. Several risk factors need immediate attention.');
+    recommendations.unshift('Segera konsultasikan dengan tenaga kesehatan profesional. Beberapa faktor risiko memerlukan perhatian segera.');
   }
 
   // Add general recommendations
-  recommendations.push('Eat a variety of foods including vegetables, fruits, protein, and whole grains.');
-  recommendations.push('Stay hydrated by drinking at least 8 glasses of water daily.');
-  recommendations.push('Get adequate rest and avoid strenuous activities.');
+  recommendations.push('Makan berbagai jenis makanan termasuk sayuran, buah-buahan, protein, dan biji-bijian utuh.');
+  recommendations.push('Tetap terhidrasi dengan minum minimal 8 gelas air setiap hari.');
+  recommendations.push('Istirahat yang cukup dan hindari aktivitas berat.');
 
   return { level, score, factors, recommendations };
 }

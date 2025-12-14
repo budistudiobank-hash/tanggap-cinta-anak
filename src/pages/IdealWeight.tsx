@@ -52,17 +52,24 @@ export default function IdealWeight() {
     formData.ageMonths > 0 &&
     formData.currentWeight > 0;
 
-  const getStatusIcon = (status: string) => {
-    if (status === 'Normal') return Check;
-    if (status === 'Below Ideal') return TrendingDown;
-    return TrendingUp;
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'Normal':
+        return 'Normal';
+      case 'Below Ideal':
+        return 'Di Bawah Ideal';
+      case 'Above Ideal':
+        return 'Di Atas Ideal';
+      default:
+        return status;
+    }
   };
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <PageHeader 
-        title="Ideal Baby Weight" 
-        subtitle="Quick weight check for your child"
+        title="Berat Ideal Bayi" 
+        subtitle="Cek berat badan ideal anak Anda"
       />
 
       <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
@@ -74,24 +81,24 @@ export default function IdealWeight() {
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Scale className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="font-semibold text-foreground">Enter Child's Details</h3>
+              <h3 className="font-semibold text-foreground">Masukkan Data Anak</h3>
             </div>
             
             <FormField
-              label="Age"
+              label="Usia"
               name="ageMonths"
               type="number"
               placeholder="12"
               value={formData.ageMonths || ''}
               onChange={(v) => handleChange('ageMonths', v)}
-              unit="months"
+              unit="bulan"
               min={0}
               max={60}
               required
             />
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Gender</Label>
+              <Label className="text-sm font-medium">Jenis Kelamin</Label>
               <RadioGroup
                 value={formData.gender}
                 onValueChange={(v) => handleChange('gender', v)}
@@ -99,17 +106,17 @@ export default function IdealWeight() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="male" id="male-weight" />
-                  <Label htmlFor="male-weight" className="cursor-pointer">Male</Label>
+                  <Label htmlFor="male-weight" className="cursor-pointer">Laki-laki</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="female" id="female-weight" />
-                  <Label htmlFor="female-weight" className="cursor-pointer">Female</Label>
+                  <Label htmlFor="female-weight" className="cursor-pointer">Perempuan</Label>
                 </div>
               </RadioGroup>
             </div>
 
             <FormField
-              label="Current Weight"
+              label="Berat Badan Saat Ini"
               name="currentWeight"
               type="number"
               placeholder="9.5"
@@ -129,7 +136,7 @@ export default function IdealWeight() {
             size="lg"
             disabled={!isFormValid}
           >
-            Check Weight Status
+            Cek Status Berat Badan
             <ArrowRight className="w-4 h-4" />
           </Button>
         </form>
@@ -137,17 +144,17 @@ export default function IdealWeight() {
         {result && (
           <Card className="p-5 space-y-5 shadow-card animate-slide-up">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-lg text-foreground">Weight Assessment</h3>
+              <h3 className="font-bold text-lg text-foreground">Penilaian Berat Badan</h3>
               <RiskIndicator 
                 level={result.status.color} 
-                label={result.status.status} 
+                label={getStatusLabel(result.status.status)} 
               />
             </div>
 
             {/* Weight Range Visual */}
             <div className="bg-secondary/50 rounded-xl p-4 space-y-4">
               <div className="text-center">
-                <div className="text-sm text-muted-foreground mb-1">Ideal Weight Range</div>
+                <div className="text-sm text-muted-foreground mb-1">Rentang Berat Ideal</div>
                 <div className="flex items-center justify-center gap-2 text-2xl font-bold text-foreground">
                   <span>{result.range.min}</span>
                   <span className="text-muted-foreground">–</span>
@@ -188,7 +195,7 @@ export default function IdealWeight() {
               </div>
 
               <div className="text-center">
-                <div className="text-sm text-muted-foreground">Current Weight</div>
+                <div className="text-sm text-muted-foreground">Berat Saat Ini</div>
                 <div className="text-xl font-bold text-foreground">{formData.currentWeight} kg</div>
               </div>
             </div>
@@ -198,7 +205,7 @@ export default function IdealWeight() {
               {result.status.status === 'Normal' && (
                 <p className="text-sm text-muted-foreground bg-risk-low/10 p-3 rounded-lg flex items-start gap-2">
                   <Check className="w-4 h-4 text-risk-low flex-shrink-0 mt-0.5" />
-                  Your child's weight is within the healthy range. Continue with balanced nutrition and regular monitoring.
+                  Berat badan anak Anda berada dalam rentang sehat. Lanjutkan dengan nutrisi seimbang dan pemantauan rutin.
                 </p>
               )}
 
@@ -206,11 +213,11 @@ export default function IdealWeight() {
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground bg-risk-high/10 p-3 rounded-lg flex items-start gap-2">
                     <TrendingDown className="w-4 h-4 text-risk-high flex-shrink-0 mt-0.5" />
-                    Your child's weight is below the ideal range. Consider improving nutrition with calorie-rich, nutritious foods.
+                    Berat badan anak Anda di bawah rentang ideal. Pertimbangkan untuk meningkatkan nutrisi dengan makanan padat kalori dan bergizi.
                   </p>
                   <Link to="/nutrition">
                     <Button variant="accent" size="sm" className="w-full">
-                      View Nutrition Recommendations
+                      Lihat Rekomendasi Gizi
                     </Button>
                   </Link>
                 </div>
@@ -219,7 +226,7 @@ export default function IdealWeight() {
               {result.status.status === 'Above Ideal' && (
                 <p className="text-sm text-muted-foreground bg-risk-moderate/10 p-3 rounded-lg flex items-start gap-2">
                   <TrendingUp className="w-4 h-4 text-risk-moderate flex-shrink-0 mt-0.5" />
-                  Your child's weight is above the ideal range. Focus on balanced nutrition and consult a healthcare provider if needed.
+                  Berat badan anak Anda di atas rentang ideal. Fokus pada nutrisi seimbang dan konsultasikan dengan tenaga kesehatan jika diperlukan.
                 </p>
               )}
             </div>

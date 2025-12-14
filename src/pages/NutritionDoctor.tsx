@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PageHeader } from '@/components/PageHeader';
 import { MedicalDisclaimer } from '@/components/MedicalDisclaimer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { nutritionData, getCategoryColor, getCategoryLabel, type AgeGroup, type FoodItem } from '@/lib/nutrition-data';
+import { nutritionData, getCategoryColor, getCategoryLabel, type FoodItem } from '@/lib/nutrition-data';
 import { Utensils, MapPin, Phone, Navigation, Loader2, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -18,13 +18,13 @@ interface HealthcareProvider {
   address: string;
 }
 
-// Mock data for healthcare providers
+// Data contoh untuk fasilitas kesehatan
 const mockProviders: HealthcareProvider[] = [
   {
     id: '1',
     name: 'Puskesmas Kecamatan Menteng',
     type: 'puskesmas',
-    distance: '1.2 km',
+    distance: '1,2 km',
     phone: '021-3141234',
     address: 'Jl. Menteng Raya No. 25',
   },
@@ -32,7 +32,7 @@ const mockProviders: HealthcareProvider[] = [
     id: '2',
     name: 'dr. Siti Aminah, Sp.A',
     type: 'doctor',
-    distance: '2.5 km',
+    distance: '2,5 km',
     phone: '021-5678901',
     address: 'RS Bunda Menteng Lt. 3',
   },
@@ -40,7 +40,7 @@ const mockProviders: HealthcareProvider[] = [
     id: '3',
     name: 'Bidan Praktik Dewi Sartika',
     type: 'midwife',
-    distance: '0.8 km',
+    distance: '0,8 km',
     phone: '0812-3456-7890',
     address: 'Jl. Cikini Raya No. 12',
   },
@@ -48,7 +48,7 @@ const mockProviders: HealthcareProvider[] = [
     id: '4',
     name: 'Puskesmas Tanah Abang',
     type: 'puskesmas',
-    distance: '3.1 km',
+    distance: '3,1 km',
     phone: '021-3144567',
     address: 'Jl. Tanah Abang II No. 5',
   },
@@ -56,7 +56,7 @@ const mockProviders: HealthcareProvider[] = [
     id: '5',
     name: 'dr. Bambang Widodo, Sp.A',
     type: 'doctor',
-    distance: '4.2 km',
+    distance: '4,2 km',
     phone: '021-7890123',
     address: 'Klinik Sehat Sejahtera',
   },
@@ -79,8 +79,8 @@ export default function NutritionDoctor() {
     
     if (!navigator.geolocation) {
       toast({
-        title: 'Location Not Supported',
-        description: 'Your browser does not support location services.',
+        title: 'Lokasi Tidak Didukung',
+        description: 'Browser Anda tidak mendukung layanan lokasi.',
         variant: 'destructive',
       });
       setLoadingLocation(false);
@@ -90,18 +90,18 @@ export default function NutritionDoctor() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLocation(position.coords);
-        setProviders(mockProviders); // In real app, fetch based on location
+        setProviders(mockProviders); // Di aplikasi nyata, ambil berdasarkan lokasi
         setLoadingLocation(false);
         toast({
-          title: 'Location Found',
-          description: 'Showing healthcare providers near you.',
+          title: 'Lokasi Ditemukan',
+          description: 'Menampilkan fasilitas kesehatan di sekitar Anda.',
         });
       },
       (error) => {
         console.error('Geolocation error:', error);
         toast({
-          title: 'Location Access Denied',
-          description: 'Please enable location access to find nearby providers.',
+          title: 'Akses Lokasi Ditolak',
+          description: 'Mohon izinkan akses lokasi untuk menemukan fasilitas terdekat.',
           variant: 'destructive',
         });
         setLoadingLocation(false);
@@ -123,19 +123,19 @@ export default function NutritionDoctor() {
   const getTypeLabel = (type: HealthcareProvider['type']) => {
     switch (type) {
       case 'doctor':
-        return 'Doctor';
+        return 'Dokter';
       case 'midwife':
-        return 'Midwife';
+        return 'Bidan';
       case 'puskesmas':
-        return 'Health Center';
+        return 'Puskesmas';
     }
   };
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <PageHeader 
-        title="Nutrition & Healthcare" 
-        subtitle="Food guidance and nearby providers"
+        title="Gizi & Fasilitas Kesehatan" 
+        subtitle="Panduan makanan dan fasilitas terdekat"
       />
 
       <div className="px-4 py-4 max-w-lg mx-auto">
@@ -143,11 +143,11 @@ export default function NutritionDoctor() {
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="nutrition" className="flex items-center gap-2">
               <Utensils className="w-4 h-4" />
-              Nutrition
+              Gizi
             </TabsTrigger>
             <TabsTrigger value="doctor" className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />
-              Find Doctor
+              Cari Dokter
             </TabsTrigger>
           </TabsList>
 
@@ -191,9 +191,9 @@ export default function NutritionDoctor() {
                   <MapPin className="w-8 h-8 text-primary" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-foreground">Find Healthcare Near You</h3>
+                  <h3 className="font-semibold text-foreground">Temukan Fasilitas Kesehatan Terdekat</h3>
                   <p className="text-sm text-muted-foreground">
-                    Allow location access to discover nearby doctors, midwives, and health centers.
+                    Izinkan akses lokasi untuk menemukan dokter, bidan, dan puskesmas di sekitar Anda.
                   </p>
                 </div>
                 <Button 
@@ -204,12 +204,12 @@ export default function NutritionDoctor() {
                   {loadingLocation ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Finding Location...
+                      Mencari Lokasi...
                     </>
                   ) : (
                     <>
                       <Navigation className="w-4 h-4" />
-                      Enable Location
+                      Aktifkan Lokasi
                     </>
                   )}
                 </Button>
@@ -218,7 +218,7 @@ export default function NutritionDoctor() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    {providers.length} providers found nearby
+                    {providers.length} fasilitas ditemukan
                   </p>
                   <Button variant="ghost" size="sm" onClick={requestLocation}>
                     Refresh
@@ -289,13 +289,13 @@ function FoodCard({ food }: { food: FoodItem }) {
         <div className="mt-4 pt-4 border-t border-border space-y-3 animate-fade-in">
           <div>
             <h5 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-1">
-              Portion Size
+              Ukuran Porsi
             </h5>
             <p className="text-sm text-muted-foreground">{food.portion}</p>
           </div>
           <div>
             <h5 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-1">
-              How to Prepare
+              Cara Penyajian
             </h5>
             <p className="text-sm text-muted-foreground">{food.preparation}</p>
           </div>

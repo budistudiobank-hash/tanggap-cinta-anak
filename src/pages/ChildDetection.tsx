@@ -71,11 +71,26 @@ export default function ChildDetection() {
     return 'text-risk-high';
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'Normal':
+        return 'Normal';
+      case 'At Risk of Stunting':
+        return 'Berisiko Stunting';
+      case 'Stunted':
+        return 'Stunting';
+      case 'Severely Stunted':
+        return 'Stunting Berat';
+      default:
+        return status;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <PageHeader 
-        title="Child Stunting Detection" 
-        subtitle="For children aged 0-5 years"
+        title="Deteksi Stunting Anak" 
+        subtitle="Untuk anak usia 0-5 tahun"
       />
 
       <div className="px-4 py-6 max-w-lg mx-auto space-y-6">
@@ -83,23 +98,23 @@ export default function ChildDetection() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Card className="p-4 space-y-4 shadow-card">
-            <h3 className="font-semibold text-foreground">Child's Information</h3>
+            <h3 className="font-semibold text-foreground">Informasi Anak</h3>
             
             <FormField
-              label="Age"
+              label="Usia"
               name="ageMonths"
               type="number"
               placeholder="12"
               value={formData.ageMonths || ''}
               onChange={(v) => handleChange('ageMonths', v)}
-              unit="months"
+              unit="bulan"
               min={0}
               max={60}
               required
             />
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Gender</Label>
+              <Label className="text-sm font-medium">Jenis Kelamin</Label>
               <RadioGroup
                 value={formData.gender}
                 onValueChange={(v) => handleChange('gender', v)}
@@ -107,18 +122,18 @@ export default function ChildDetection() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="male" id="male" />
-                  <Label htmlFor="male" className="cursor-pointer">Male</Label>
+                  <Label htmlFor="male" className="cursor-pointer">Laki-laki</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="female" id="female" />
-                  <Label htmlFor="female" className="cursor-pointer">Female</Label>
+                  <Label htmlFor="female" className="cursor-pointer">Perempuan</Label>
                 </div>
               </RadioGroup>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                label="Height"
+                label="Tinggi Badan"
                 name="height"
                 type="number"
                 placeholder="75"
@@ -131,7 +146,7 @@ export default function ChildDetection() {
                 required
               />
               <FormField
-                label="Weight"
+                label="Berat Badan"
                 name="weight"
                 type="number"
                 placeholder="9.5"
@@ -152,7 +167,7 @@ export default function ChildDetection() {
             size="lg"
             disabled={!isFormValid}
           >
-            Check Growth Status
+            Cek Status Pertumbuhan
             <ArrowRight className="w-4 h-4" />
           </Button>
         </form>
@@ -160,18 +175,18 @@ export default function ChildDetection() {
         {result && (
           <Card className="p-5 space-y-5 shadow-card animate-slide-up">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-lg text-foreground">Growth Assessment</h3>
+              <h3 className="font-bold text-lg text-foreground">Penilaian Pertumbuhan</h3>
               <RiskIndicator 
                 level={result.status.color} 
-                label={result.status.status} 
+                label={getStatusLabel(result.status.status)} 
               />
             </div>
 
             <div className="grid grid-cols-3 gap-3">
               {[
-                { label: 'Height-for-Age', value: result.haz, abbr: 'HAZ' },
-                { label: 'Weight-for-Age', value: result.waz, abbr: 'WAZ' },
-                { label: 'Weight-for-Height', value: result.whz, abbr: 'WHZ' },
+                { label: 'Tinggi/Usia', value: result.haz, abbr: 'TB/U' },
+                { label: 'Berat/Usia', value: result.waz, abbr: 'BB/U' },
+                { label: 'Berat/Tinggi', value: result.whz, abbr: 'BB/TB' },
               ].map(({ label, value, abbr }) => {
                 const Icon = getZScoreIcon(value);
                 const colorClass = getZScoreColor(value);
@@ -189,24 +204,24 @@ export default function ChildDetection() {
             </div>
 
             <div className="space-y-3 pt-2">
-              <h4 className="text-sm font-semibold text-foreground">What This Means</h4>
+              <h4 className="text-sm font-semibold text-foreground">Apa Artinya Ini</h4>
               
               {result.status.severity === 'normal' && (
                 <p className="text-sm text-muted-foreground bg-risk-low/10 p-3 rounded-lg">
-                  Your child's growth is within the normal range according to WHO standards. 
-                  Continue with regular checkups and balanced nutrition.
+                  Pertumbuhan anak Anda berada dalam rentang normal menurut standar WHO. 
+                  Lanjutkan pemeriksaan rutin dan nutrisi seimbang.
                 </p>
               )}
 
               {result.status.severity === 'at-risk' && (
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground bg-risk-moderate/10 p-3 rounded-lg">
-                    Your child's height is slightly below expected for their age. This is an 
-                    early warning sign that needs attention.
+                    Tinggi badan anak Anda sedikit di bawah yang diharapkan untuk usianya. Ini adalah 
+                    tanda peringatan dini yang perlu diperhatikan.
                   </p>
                   <Link to="/nutrition">
                     <Button variant="accent" size="sm" className="w-full">
-                      View Nutrition Recommendations
+                      Lihat Rekomendasi Gizi
                     </Button>
                   </Link>
                 </div>
@@ -215,12 +230,12 @@ export default function ChildDetection() {
               {(result.status.severity === 'stunted' || result.status.severity === 'severely-stunted') && (
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground bg-risk-high/10 p-3 rounded-lg">
-                    Your child's growth indicates stunting. Please consult a healthcare 
-                    professional for proper evaluation and treatment plan.
+                    Pertumbuhan anak Anda menunjukkan indikasi stunting. Silakan konsultasikan dengan 
+                    tenaga kesehatan profesional untuk evaluasi dan rencana penanganan yang tepat.
                   </p>
                   <Link to="/nutrition?tab=doctor">
                     <Button variant="destructive" size="sm" className="w-full">
-                      Find Healthcare Provider
+                      Temukan Fasilitas Kesehatan
                     </Button>
                   </Link>
                 </div>

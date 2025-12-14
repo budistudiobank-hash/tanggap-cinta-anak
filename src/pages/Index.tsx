@@ -7,40 +7,40 @@ const menuItems = [
   {
     path: '/pregnancy',
     icon: Heart,
-    title: 'Pregnancy Stunting Detection',
-    description: 'Assess stunting risk before birth',
+    title: 'Deteksi Stunting Kehamilan',
+    description: 'Menilai risiko stunting sebelum kelahiran',
     color: 'text-accent',
     bgColor: 'bg-accent/10',
   },
   {
     path: '/child',
     icon: Baby,
-    title: 'Child Stunting Detection',
-    description: 'Check growth status for children 0-5 years',
+    title: 'Deteksi Stunting Anak',
+    description: 'Cek status pertumbuhan anak usia 0-5 tahun',
     color: 'text-primary',
     bgColor: 'bg-primary/10',
   },
   {
     path: '/weight',
     icon: Calculator,
-    title: 'Ideal Baby Weight Calculator',
-    description: 'Quick weight check for your child',
+    title: 'Kalkulator Berat Ideal Bayi',
+    description: 'Cek berat badan ideal anak Anda',
     color: 'text-risk-low',
     bgColor: 'bg-risk-low/10',
   },
   {
     path: '/nutrition',
     icon: Utensils,
-    title: 'Nutrition & Food Menu',
-    description: 'Age-appropriate food recommendations',
+    title: 'Gizi & Menu Makanan',
+    description: 'Rekomendasi makanan sesuai usia',
     color: 'text-risk-moderate',
     bgColor: 'bg-risk-moderate/10',
   },
   {
     path: '/nutrition?tab=doctor',
     icon: MapPin,
-    title: 'Doctor Near Me',
-    description: 'Find nearby healthcare providers',
+    title: 'Dokter Terdekat',
+    description: 'Temukan fasilitas kesehatan di sekitar Anda',
     color: 'text-primary',
     bgColor: 'bg-primary/10',
   },
@@ -61,7 +61,7 @@ export default function Index() {
               Tanggap Stunting
             </h1>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
-              Detect, prevent, and respond to stunting early using WHO-based indicators and practical guidance.
+              Deteksi, cegah, dan tangani stunting sejak dini menggunakan indikator berbasis WHO dan panduan praktis.
             </p>
           </div>
         </div>
