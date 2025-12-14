@@ -1,14 +1,106 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Link } from 'react-router-dom';
+import { Baby, Heart, Calculator, Utensils, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MedicalDisclaimer } from '@/components/MedicalDisclaimer';
 
-const Index = () => {
+const menuItems = [
+  {
+    path: '/pregnancy',
+    icon: Heart,
+    title: 'Pregnancy Stunting Detection',
+    description: 'Assess stunting risk before birth',
+    color: 'text-accent',
+    bgColor: 'bg-accent/10',
+  },
+  {
+    path: '/child',
+    icon: Baby,
+    title: 'Child Stunting Detection',
+    description: 'Check growth status for children 0-5 years',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10',
+  },
+  {
+    path: '/weight',
+    icon: Calculator,
+    title: 'Ideal Baby Weight Calculator',
+    description: 'Quick weight check for your child',
+    color: 'text-risk-low',
+    bgColor: 'bg-risk-low/10',
+  },
+  {
+    path: '/nutrition',
+    icon: Utensils,
+    title: 'Nutrition & Food Menu',
+    description: 'Age-appropriate food recommendations',
+    color: 'text-risk-moderate',
+    bgColor: 'bg-risk-moderate/10',
+  },
+  {
+    path: '/nutrition?tab=doctor',
+    icon: MapPin,
+    title: 'Doctor Near Me',
+    description: 'Find nearby healthcare providers',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10',
+  },
+];
+
+export default function Index() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background pb-20">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent" />
+        <div className="relative px-4 pt-8 pb-6 max-w-lg mx-auto">
+          <div className="text-center space-y-3 animate-fade-in">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary shadow-button mb-2">
+              <Baby className="w-8 h-8 text-primary-foreground" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">
+              Tanggap Stunting
+            </h1>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
+              Detect, prevent, and respond to stunting early using WHO-based indicators and practical guidance.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Menu Grid */}
+      <div className="px-4 max-w-lg mx-auto space-y-3">
+        {menuItems.map((item, index) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className="block animate-slide-up"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <Button
+              variant="menu"
+              size="menu"
+              className="w-full group"
+            >
+              <div className={`flex-shrink-0 w-12 h-12 rounded-xl ${item.bgColor} flex items-center justify-center transition-transform group-hover:scale-110`}>
+                <item.icon className={`w-6 h-6 ${item.color}`} />
+              </div>
+              <div className="flex-1 text-left ml-3">
+                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {item.description}
+                </p>
+              </div>
+            </Button>
+          </Link>
+        ))}
+      </div>
+
+      {/* Disclaimer */}
+      <div className="px-4 mt-8 max-w-lg mx-auto">
+        <MedicalDisclaimer />
       </div>
     </div>
   );
-};
-
-export default Index;
+}
