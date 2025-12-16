@@ -1,15 +1,20 @@
 import { PageHeader } from '@/components/PageHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useGrowthHistory, GrowthRecord } from '@/hooks/useGrowthHistory';
+import { useGrowthHistory } from '@/hooks/useGrowthHistory';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
-import { Trash2, TrendingUp, Calendar, Ruler, Scale } from 'lucide-react';
+import { Trash2, TrendingUp, Calendar, Ruler, Scale, FileText, FileSpreadsheet, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import { useToast } from '@/hooks/use-toast';
 
 export default function GrowthHistory() {
   const { records, deleteRecord, clearHistory } = useGrowthHistory();
+  const { toast } = useToast();
 
   const chartData = records.map(r => ({
     date: format(new Date(r.date), 'dd MMM', { locale: id }),
@@ -35,6 +40,76 @@ export default function GrowthHistory() {
       case 'Severely Stunted': return 'Stunting Berat';
       default: return status;
     }
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    
+    // Header
+    doc.setFontSize(18);
+    doc.setTextColor(22, 163, 74); // Green color
+    doc.text('Tanggap Stunting', 14, 20);
+    
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Riwayat Pertumbuhan Anak', 14, 30);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Diekspor: ${format(new Date(), 'dd MMMM yyyy HH:mm', { locale: id })}`, 14, 38);
+
+    // Table data
+    const tableData = records.map(r => [
+      format(new Date(r.date), 'dd/MM/yyyy', { locale: id }),
+      `${r.ageMonths} bln`,
+      r.gender === 'male' ? 'L' : 'P',
+      `${r.height} cm`,
+      `${r.weight} kg`,
+      r.haz.toFixed(2),
+      r.waz.toFixed(2),
+      r.whz.toFixed(2),
+      getStatusLabel(r.status),
+    ]);
+
+    autoTable(doc, {
+      startY: 45,
+      head: [['Tanggal', 'Usia', 'JK', 'Tinggi', 'Berat', 'TB/U', 'BB/U', 'BB/TB', 'Status']],
+      body: tableData,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [22, 163, 74], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+
+    doc.save(`riwayat-pertumbuhan-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
+    toast({ title: 'Berhasil!', description: 'Data berhasil diekspor ke PDF' });
+  };
+
+  const exportToExcel = () => {
+    const excelData = records.map(r => ({
+      'Tanggal': format(new Date(r.date), 'dd/MM/yyyy'),
+      'Usia (bulan)': r.ageMonths,
+      'Jenis Kelamin': r.gender === 'male' ? 'Laki-laki' : 'Perempuan',
+      'Tinggi (cm)': r.height,
+      'Berat (kg)': r.weight,
+      'Z-Score TB/U': r.haz.toFixed(2),
+      'Z-Score BB/U': r.waz.toFixed(2),
+      'Z-Score BB/TB': r.whz.toFixed(2),
+      'Status': getStatusLabel(r.status),
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Riwayat Pertumbuhan');
+    
+    // Auto-size columns
+    const colWidths = [
+      { wch: 12 }, { wch: 12 }, { wch: 14 }, { wch: 12 }, { wch: 12 },
+      { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 16 }
+    ];
+    ws['!cols'] = colWidths;
+
+    XLSX.writeFile(wb, `riwayat-pertumbuhan-${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+    toast({ title: 'Berhasil!', description: 'Data berhasil diekspor ke Excel' });
   };
 
   return (
@@ -109,6 +184,24 @@ export default function GrowthHistory() {
                     <Line yAxisId="weight" type="monotone" dataKey="berat" name="Berat (kg)" stroke="hsl(var(--accent))" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* Export Buttons */}
+            <Card className="p-4 shadow-card">
+              <div className="flex items-center gap-2 mb-3">
+                <Download className="w-5 h-5 text-primary" />
+                <h3 className="font-semibold text-foreground">Ekspor Data</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Button onClick={exportToPDF} variant="outline" className="w-full">
+                  <FileText className="w-4 h-4 mr-2 text-red-500" />
+                  Ekspor PDF
+                </Button>
+                <Button onClick={exportToExcel} variant="outline" className="w-full">
+                  <FileSpreadsheet className="w-4 h-4 mr-2 text-green-600" />
+                  Ekspor Excel
+                </Button>
               </div>
             </Card>
 
