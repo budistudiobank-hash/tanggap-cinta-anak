@@ -129,7 +129,7 @@ export default function GrowthHistory() {
                 Mulai periksa pertumbuhan anak untuk melihat grafik perkembangan
               </p>
             </div>
-            <Link to="/child-detection">
+            <Link to="/child">
               <Button>Mulai Pemeriksaan</Button>
             </Link>
           </Card>
