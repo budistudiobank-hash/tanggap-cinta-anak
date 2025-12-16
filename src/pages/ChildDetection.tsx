@@ -8,8 +8,10 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { calculateHAZ, calculateWAZ, calculateWHZ, getStuntingStatus } from '@/lib/who-standards';
-import { ArrowRight, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { ArrowRight, TrendingUp, TrendingDown, Minus, Save, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useGrowthHistory } from '@/hooks/useGrowthHistory';
+import { useToast } from '@/hooks/use-toast';
 
 interface ChildData {
   ageMonths: number;
@@ -34,6 +36,9 @@ export default function ChildDetection() {
   });
 
   const [result, setResult] = useState<DetectionResult | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const { saveRecord } = useGrowthHistory();
+  const { toast } = useToast();
 
   const handleChange = (name: keyof ChildData, value: string) => {
     setFormData((prev) => ({
@@ -41,6 +46,7 @@ export default function ChildDetection() {
       [name]: name === 'gender' ? value : parseFloat(value) || 0,
     }));
     setResult(null);
+    setIsSaved(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,6 +58,28 @@ export default function ChildDetection() {
     const status = getStuntingStatus(haz);
 
     setResult({ haz, waz, whz, status });
+    setIsSaved(false);
+  };
+
+  const handleSave = () => {
+    if (!result) return;
+    
+    saveRecord({
+      ageMonths: formData.ageMonths,
+      gender: formData.gender,
+      height: formData.height,
+      weight: formData.weight,
+      haz: result.haz,
+      waz: result.waz,
+      whz: result.whz,
+      status: result.status.status,
+    });
+    
+    setIsSaved(true);
+    toast({
+      title: "Tersimpan!",
+      description: "Data pemeriksaan berhasil disimpan ke riwayat",
+    });
   };
 
   const isFormValid = 
@@ -240,6 +268,25 @@ export default function ChildDetection() {
                   </Link>
                 </div>
               )}
+            </div>
+
+            {/* Save & History buttons */}
+            <div className="flex gap-3 pt-2">
+              <Button 
+                onClick={handleSave} 
+                disabled={isSaved}
+                className="flex-1"
+                variant={isSaved ? "secondary" : "default"}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isSaved ? 'Tersimpan' : 'Simpan Hasil'}
+              </Button>
+              <Link to="/history" className="flex-1">
+                <Button variant="outline" className="w-full">
+                  <History className="w-4 h-4 mr-2" />
+                  Lihat Riwayat
+                </Button>
+              </Link>
             </div>
           </Card>
         )}

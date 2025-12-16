@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Baby, Heart, Calculator, Utensils } from 'lucide-react';
+import { Home, Baby, Heart, TrendingUp, Utensils } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/', icon: Home, label: 'Beranda' },
   { path: '/pregnancy', icon: Heart, label: 'Kehamilan' },
   { path: '/child', icon: Baby, label: 'Anak' },
-  { path: '/weight', icon: Calculator, label: 'Berat' },
+  { path: '/history', icon: TrendingUp, label: 'Riwayat' },
   { path: '/nutrition', icon: Utensils, label: 'Gizi' },
 ];
 
