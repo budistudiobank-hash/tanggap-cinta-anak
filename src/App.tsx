@@ -25,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/pregnancy" element={<PregnancyDetection />} />
             <Route path="/child" element={<ChildDetection />} />
+            <Route path="/child-detection" element={<ChildDetection />} />
             <Route path="/history" element={<GrowthHistory />} />
             <Route path="/weight" element={<IdealWeight />} />
             <Route path="/nutrition" element={<NutritionDoctor />} />
