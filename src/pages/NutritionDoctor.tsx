@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PageHeader } from '@/components/PageHeader';
 import { MedicalDisclaimer } from '@/components/MedicalDisclaimer';
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { nutritionData, getCategoryColor, getCategoryLabel, type FoodItem } from '@/lib/nutrition-data';
 import { Utensils, MapPin, Phone, Navigation, Loader2, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Geolocation } from '@capacitor/geolocation';
 
 interface HealthcareProvider {
   id: string;
@@ -67,46 +68,52 @@ export default function NutritionDoctor() {
   const defaultTab = searchParams.get('tab') === 'doctor' ? 'doctor' : 'nutrition';
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [selectedAge, setSelectedAge] = useState<string>('6-12');
-  const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
+  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [providers, setProviders] = useState<HealthcareProvider[]>([]);
   const { toast } = useToast();
 
   const selectedAgeGroup = nutritionData.find((g) => g.id === selectedAge);
 
-  const requestLocation = () => {
+  const requestLocation = async () => {
     setLoadingLocation(true);
     
-    if (!navigator.geolocation) {
-      toast({
-        title: 'Lokasi Tidak Didukung',
-        description: 'Browser Anda tidak mendukung layanan lokasi.',
-        variant: 'destructive',
-      });
-      setLoadingLocation(false);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation(position.coords);
-        setProviders(mockProviders); // Di aplikasi nyata, ambil berdasarkan lokasi
-        setLoadingLocation(false);
-        toast({
-          title: 'Lokasi Ditemukan',
-          description: 'Menampilkan fasilitas kesehatan di sekitar Anda.',
-        });
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
+    try {
+      // Request permission first (for native apps)
+      const permissionStatus = await Geolocation.requestPermissions();
+      
+      if (permissionStatus.location !== 'granted') {
         toast({
           title: 'Akses Lokasi Ditolak',
-          description: 'Mohon izinkan akses lokasi untuk menemukan fasilitas terdekat.',
+          description: 'Mohon izinkan akses lokasi di pengaturan perangkat Anda.',
           variant: 'destructive',
         });
         setLoadingLocation(false);
+        return;
       }
-    );
+
+      // Get current position
+      const position = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000,
+      });
+
+      setLocation(position.coords);
+      setProviders(mockProviders); // Di aplikasi nyata, ambil berdasarkan lokasi
+      setLoadingLocation(false);
+      toast({
+        title: 'Lokasi Ditemukan',
+        description: 'Menampilkan fasilitas kesehatan di sekitar Anda.',
+      });
+    } catch (error) {
+      console.error('Geolocation error:', error);
+      toast({
+        title: 'Gagal Mendapatkan Lokasi',
+        description: 'Pastikan GPS aktif dan coba lagi.',
+        variant: 'destructive',
+      });
+      setLoadingLocation(false);
+    }
   };
 
   const getTypeColor = (type: HealthcareProvider['type']) => {
